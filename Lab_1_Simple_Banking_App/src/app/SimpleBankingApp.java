@@ -3,58 +3,62 @@ package app;
 import controller.UserController;
 import controller.AccountController;
 import controller.TransactionController;
-import model.Account;
-import model.User;
-
-import java.util.Vector;
+import java.util.Date;
 
 public class SimpleBankingApp {
 
     public static void main(String[] args) {
-        // Load user and account data through controllers
-        Vector<User> users = UserController.loadUserData();
-        Vector<Account> accounts = AccountController.loadAccountData();
 
-        // Print loaded users
-        System.out.println("There are: " + users.size() + " users in the system.");
-        System.out.println(String.format("%-25s| %-15s| %-15s| %-15s| %-15s",
-                "username", "password", "first_name", "last_name", "mobile_number"));
-        System.out.println("-------------------------------------------------------------------------------------------");
-        for (User user : users) {
-            System.out.println(user.toString());
-        }
-        System.out.println();
+        // Load initial data
+        UserController.loadUserData();
+        AccountController.loadAccountData();
 
-        // Print loaded accounts
-        System.out.println("Accounts: initial state, after loading...");
-        printAllAccounts(accounts);
+        System.out.println("\n--- Initial Users ---");
+        UserController.printUsers();
 
-        // Perform some transactions
+        System.out.println("\n--- Initial Accounts ---");
+        AccountController.printAccounts();
+
+        // Adding a new user
+        System.out.println("\nAdding a new user...");
+        UserController.addUser("john.doe", "secure123", "John", "Doe", "07891234567");
+        UserController.printUsers();
+
+        // Deleting a user
+        System.out.println("\nDeleting user: james.cameron@gmail.com");
+        UserController.deleteUser("james.cameron@gmail.com");
+        UserController.printUsers();
+
+        // Adding a new account
+        System.out.println("\nAdding a new account...");
+        AccountController.addAccount("123456", "john.doe", "Saving", new Date());
+        AccountController.printAccounts();
+
+        // Trying to add a duplicate account
+        System.out.println("\nTrying to add a duplicate account...");
+        AccountController.addAccount("123456", "john.doe", "Saving", new Date());
+
+        // Deleting an account
+        System.out.println("\nDeleting account 123456...");
+        AccountController.deleteAccount("123456");
+        AccountController.printAccounts();
+
+        // Performing transactions
+        System.out.println("\nPerforming Transactions...");
         TransactionController.addTransaction("5495-1234", -50.21);
-        System.out.println("Account: after the 1st addTransaction function call...");
-        printAllAccounts(accounts);
+        TransactionController.getBalance("5495-1234");
+        System.out.println("\nAccount balances after the 1st transaction:");
+        AccountController.printAccounts();
 
-        // Additional transactions
         TransactionController.addTransaction("5495-1234", 520.00);
-        TransactionController.addTransaction("9999-1111", 21.00); // Account does not exist
-        System.out.println("Account: after the 2nd/3rd addTransaction function calls...");
-        printAllAccounts(accounts);
-    }
+        System.out.println("\nAccount balances after additional transactions:");
+        AccountController.printAccounts();
 
-    private static void printAllAccounts(Vector<Account> accounts) {
-        System.out.println("There are: " + accounts.size() + " accounts in the system.");
-        System.out.println(String.format("%-15s| %-30s| %-10s| %-15s| %-10s",
-                "Account #", "Username of Account Holder", "Type", "Opening Date", "Balance"));
-        System.out.println("---------------------------------------------------------------------------------------------");
+        // Authenticating a user
+        System.out.println("\nAuthenticating user: john.doe...");
+        boolean isAuthenticated = UserController.authenticateUser("john.doe", "secure123");
+        System.out.println(isAuthenticated ? "User authentication successful." : "Authentication failed.");
 
-        for (Account account : accounts) {
-            System.out.printf("%-15s| %-30s| %-10s| %-15s| $%-10.2f%n",
-                    account.getAccount_number(),
-                    account.getUsername_of_account_holder(),
-                    account.getAccount_type(),
-                    account.getAccount_opening_date(),
-                    TransactionController.getBalance(account.getAccount_number()));
-        }
-        System.out.println();
+        System.out.println("\nSimpleBankingApp execution completed.");
     }
 }

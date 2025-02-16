@@ -75,27 +75,24 @@ public class AccountTest {
         else
             TestUtils.printTestFailed("TC11-toString (Account)");
     }
-        public static void testAddDuplicateAccount() {
-            System.out.println("Starting test: testAddDuplicateAccount");
+    public static void testPreventDuplicateAccounts() {
+        System.out.println("Starting test: testPreventDuplicateAccounts");
 
-            // Setup: Create an account
-            Date testDate = new Date();
-            AccountController.loadAccountData(); // Ensure accounts are loaded
-            boolean firstAdd = AccountController.addAccount("123456", "mike", "Saving", testDate);
-            boolean secondAdd = AccountController.addAccount("123456", "mike", "Saving", testDate); // Duplicate attempt
+        // Setup: Add an account
+        boolean firstAdd = AccountController.addAccount("123999", "test.user", "Saving", new Date());
+        boolean secondAdd = AccountController.addAccount("123999", "test.user", "Saving", new Date()); // Duplicate attempt
 
-            // Verify
-            if (firstAdd)
-                TestUtils.printTestPassed("TC1-First account creation should succeed");
-            else
-                TestUtils.printTestFailed("TC1-First account creation should succeed");
+        if (firstAdd)
+            TestUtils.printTestPassed("TC1-First account creation should succeed");
+        else
+            TestUtils.printTestFailed("TC1-First account creation should succeed");
 
-            if (!secondAdd)
-                TestUtils.printTestPassed("TC2-Duplicate account should not be allowed");
-            else
-                TestUtils.printTestFailed("TC2-Duplicate account should not be allowed");
-        }
-        
+        if (!secondAdd)
+            TestUtils.printTestPassed("TC2-Duplicate account should not be allowed");
+        else
+            TestUtils.printTestFailed("TC2-Duplicate account should not be allowed");
+    }
+    
         public static void testDeleteAccount() {
             System.out.println("Starting test: testDeleteAccount");
 
@@ -152,5 +149,8 @@ public class AccountTest {
         testSetAccountNumber();
         testSetAccountOpeningDateNull();
         testToString();
+        testDeleteAccount();
+        testPreventDuplicateAccounts();
+        
     }
 }
